@@ -1,10 +1,12 @@
 
-
-import requests
+# def call():
+import requests, os
 from bs4 import BeautifulSoup as bs
-import os
 from flask import Flask, request, render_template
 from flask_socketio import SocketIO
+
+# import threading, time
+# from Adafruit import livemqtt as lm
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
@@ -51,47 +53,80 @@ def page_not_found(e):
 @app.route('/')
 def iotled():
 
+#     data1 = 'ON'
+#
+#     if data1 == 'ON':
+#         img = 'static/logo/bulbon.jpg'
+#     else:
+#         img = '../static/logo/bulboff.jpg'
+#
+#     return render_template("iotled.html",
+#                             data=data1,
+#                             img = img
+#                           )
+#
+#
+# @app.route('/converted_iotled', methods=['POST'])
+# def converted_iotled():
+
     from vicksbase import firebase as vix
     firebase_obj = vix.FirebaseApplication('https://home-automation-336c0-default-rtdb.firebaseio.com/', None)
 
-    result1 = firebase_obj.get('A/B/C/Switch', None)
-    data1="{}".format(result1)
+    # data = int(request.form['iotled'])
+    from Adafruit_IO import Client, Data
 
-    if data1 == '1':
-        img = 'static/logo/bulbon.jpg'
+    with open('data.txt', 'r') as f:
+        key = str(f.read())
+
+    print(key)
+
+    aio = Client('imvickykumar999', 'aio_VwQb718pVsvDw9zrSKBJLMUDQHnQ')
+    feed = 'ledswitch'
+
+    data = aio.receive(feed).value
+    if data == 'ON':
+        d=1
     else:
-        img = '../static/logo/bulboff.jpg'
-
-    return render_template("iotled.html",
-                            data=data1,
-                            img = img
-                          )
-
-
-@app.route('/converted_iotled', methods=['POST'])
-def converted_iotled():
-
-    from vicksbase import firebase as vix
-    firebase_obj = vix.FirebaseApplication('https://home-automation-336c0-default-rtdb.firebaseio.com/', None)
-
-    data = int(request.form['iotled'])
-    firebase_obj.put('A/B/C','Switch', data)
+        d=0
+    firebase_obj.put('A/B/C','Switch', d)
 
     result1 = firebase_obj.get('led1', None)
-    data1="{}".format(result1)
 
-    if data1 == '1':
+    if d == 1:
         img = 'static/logo/bulbon.jpg'
     else:
         img = '../static/logo/bulboff.jpg'
 
     return render_template("iotled.html",
-                            data=data1,
+                            data=d,
                             img = img
                           )
 
 # ============================================
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     socketio.run(app, debug=True)
+
+
+# if __name__ == "__main__":
+#     t1 = threading.Thread(target=lm.threadone)
+#
+#     time.sleep(2)
+#     t2 = threading.Thread(target=socketio.run(app, debug=True))
+#
+#     # starting thread 1
+#     t1.start()
+#     # starting thread 2
+#     t2.start()
+#
+#     # wait until thread 1 is completely executed
+#     t1.join()
+#     # wait until thread 2 is completely executed
+#     t2.join()
+#
+#     # both threads completely executed
+#     print("Done!")
+
+
+# -----------------------------------------------
+# ValueError: signal only works in main thread
