@@ -52,29 +52,19 @@ def iotled():
     from vicksbase import firebase as vix
     firebase_obj = vix.FirebaseApplication('https://home-automation-336c0-default-rtdb.firebaseio.com/', None)
 
-    result1 = firebase_obj.get('A/B/C/Switch', None)
-    data1="{}".format(result1)
+    from Adafruit_IO import Client, Data
 
-    if data1 == '1':
-        img = 'static/logo/bulbon.jpg'
+    aio = Client('imvickykumar999', 'aio_rUez595dIZJqRRdHq8zUdy1nefYP')
+    feed = 'ledswitch'
+
+    data = aio.receive(feed).value
+    if data == 'ON':
+        d=1
     else:
-        img = '../static/logo/bulboff.jpg'
+        d=0
 
-    return render_template("iotled.html",
-                            data=data1,
-                            img = img
-                          )
-
-@app.route('/converted_iotled', methods=['POST'])
-def converted_iotled():
-
-    from vicksbase import firebase as vix
-    firebase_obj = vix.FirebaseApplication('https://home-automation-336c0-default-rtdb.firebaseio.com/', None)
-
-    data = int(request.form['iotled'])
-    firebase_obj.put('A/B/C','Switch', data)
-
-    result1 = firebase_obj.get('led1', None)
+    firebase_obj.put('A/B/C','Switch', d)
+    result1 = firebase_obj.get('A/B/C/Switch', None)
     data1="{}".format(result1)
 
     if data1 == '1':
