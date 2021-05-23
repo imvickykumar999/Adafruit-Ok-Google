@@ -65,7 +65,6 @@ def iotled():
                             img = img
                           )
 
-
 @app.route('/converted_iotled', methods=['POST'])
 def converted_iotled():
 
