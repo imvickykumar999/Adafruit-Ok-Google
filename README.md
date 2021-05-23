@@ -1,4 +1,4 @@
-# [Home Automation](https://vixtest.herokuapp.com/)
+# [Home Automation](https://vicks-home-automation.herokuapp.com/)
 
 # Adafruit-Ok-Google
     Home Automation using Adafruit, Google Assistance Services, ESP32, Arduino IDE and Flask
